@@ -1,0 +1,10 @@
+venv/
+venv_light_ai/
+__pycache__/
+*.pyc
+*/migrations/*
+db.sqlite3
+.env
+staticfiles/
+archive/
+notes.txt

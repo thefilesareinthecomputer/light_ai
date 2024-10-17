@@ -8,3 +8,4 @@ db.sqlite3
 staticfiles/
 archive/
 notes.txt
+git rm --cached /Users/aw/github_repositories/light_ai/archive/chatbot_app_original.py

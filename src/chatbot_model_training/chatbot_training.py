@@ -17,7 +17,7 @@ SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 def train_chatbot_model():
     lemmatizer = WordNetLemmatizer()
 
-    intents = json.loads(open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_intents.json').read())
+    intents = json.loads(open(f'{SCRIPT_DIR_PATH}/chatbot_intents.json').read())
 
     words = []
     classes = []

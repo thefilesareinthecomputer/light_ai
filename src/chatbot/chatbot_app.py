@@ -51,7 +51,7 @@ import wikipedia
 import wolframalpha
 import yfinance as yf
 
-from user_persona import (
+from secrets.user_persona import (
     user_demographics, 
     user_skills_and_experience,
     user_interests, 

@@ -3,14 +3,15 @@ venv_light_ai/
 __pycache__/
 staticfiles/
 archive/
-secrets/
 app_generated_files/
 db/
 
 *.pyc
 */migrations/*
 db.sqlite3
-.env
 
+.env
+user_persona.py
 notes.txt
 chatbot_app_original.py
+git rm -r --cached /Users/aw/Desktop/github_repositories/light_ai/secrets/

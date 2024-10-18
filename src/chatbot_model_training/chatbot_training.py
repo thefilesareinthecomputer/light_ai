@@ -17,8 +17,12 @@ SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
 def train_chatbot_model():
     lemmatizer = WordNetLemmatizer()
 
-    intents = json.loads(open(f'{SCRIPT_DIR_PATH}/chatbot_intents.json').read())
+    # intents = json.loads(open(f'{SCRIPT_DIR_PATH}/chatbot_intents.json').read())
 
+    # changed to 'with' because of a warning about not clising opened files after use
+    with open(f'{SCRIPT_DIR_PATH}/chatbot_intents.json', 'r') as f:
+        intents = json.load(f)
+        
     words = []
     classes = []
     documents = []
@@ -38,9 +42,16 @@ def train_chatbot_model():
 
     classes = sorted(set(classes))
 
-    pickle.dump(words, open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_words.pkl', 'wb'))
-    pickle.dump(classes, open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_classes.pkl', 'wb'))
+    # pickle.dump(words, open(f'{SCRIPT_DIR_PATH}/chatbot_words.pkl', 'wb'))
+    # pickle.dump(classes, open(f'{SCRIPT_DIR_PATH}/chatbot_classes.pkl', 'wb'))
 
+    # Use 'with' to ensure files are closed after writing
+    with open(f'{SCRIPT_DIR_PATH}/chatbot_words.pkl', 'wb') as f:
+        pickle.dump(words, f)
+
+    with open(f'{SCRIPT_DIR_PATH}/chatbot_classes.pkl', 'wb') as f:
+        pickle.dump(classes, f)
+        
     training = []
     output_empty = [0] * len(classes)
 
@@ -71,12 +82,18 @@ def train_chatbot_model():
     model.add(tf.keras.layers.Dropout(0.5))
     model.add(tf.keras.layers.Dense(len(train_y[0]), activation='softmax'))
 
-    sgd = tf.keras.optimizers.legacy.SGD(learning_rate=0.01, momentum=0.9, nesterov=True)
+    sgd = tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9, nesterov=True)
     model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
     hist = model.fit(train_x, train_y, epochs=200, batch_size=5, verbose=1)
-    model.save(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_model.keras', hist)
-    print("Done!")
+    model.save(f'{SCRIPT_DIR_PATH}/chatbot_model.keras', hist)
+    # removed the hist argument from model.save() because it was causing an error
+    # model.save(f'{SCRIPT_DIR_PATH}/chatbot_model.keras')
+    # check if the model is saved
+    if os.path.exists(f'{SCRIPT_DIR_PATH}/chatbot_model.keras'):
+        print("Model training complete!")
+    else:
+        print("Model training failed!")
 
 if __name__ == '__main__':
     train_chatbot_model()

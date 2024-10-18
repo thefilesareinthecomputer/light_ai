@@ -305,5 +305,10 @@ class Stocks:
         comprehensive_summary.to_csv(f'{FILE_DROP_DIR_PATH}/stock_data_stats_{now}.csv', index=False)
         print(f"Stock data stats summary saved to {FILE_DROP_DIR_PATH}/stock_data_stats_{now}.csv")
         return comprehensive_summary
-    
-Stocks(valid_tickers)
+
+# this script used to end like this before writing the test:
+# Stocks(valid_tickers)
+
+# and it's since been changed to this:
+if __name__ == '__main__':
+    stocks = Stocks(valid_tickers)

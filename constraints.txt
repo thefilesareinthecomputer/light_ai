@@ -1,0 +1,4 @@
+protobuf==4.25.5 # required version for tensorflow and google-generativeai
+google-generativeai==0.3.2
+tensorflow==2.15.0
+SpeechRecognition==3.10.1

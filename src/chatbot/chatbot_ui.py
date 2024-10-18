@@ -158,7 +158,7 @@ def ui_main(page: ft.Page):
 # MAIN EXECUTION ###################################################################################################################################
     
 def run_chatbot():
-    chatbot_app = ChatBotApp()  # Initialize the chatbot app
+    chatbot_app = ChatBotBrain()  # Initialize the chatbot app
     chatbot_tools = ChatBotTools()  # Initialize the chatbot tools
     chatbot_app.chat(chatbot_tools)  # Run the chatbot app with the tools
 

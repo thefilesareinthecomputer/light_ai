@@ -1,11 +1,16 @@
 venv/
 venv_light_ai/
 __pycache__/
+staticfiles/
+archive/
+secrets/
+app_generated_files/
+db/
+
 *.pyc
 */migrations/*
 db.sqlite3
 .env
-staticfiles/
-archive/
+
 notes.txt
-git rm --cached /Users/aw/github_repositories/light_ai/archive/chatbot_app_original.py
+chatbot_app_original.py

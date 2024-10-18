@@ -1,57 +1,13 @@
 # standard imports
-from datetime import datetime, timedelta
-import asyncio
-import inspect
-import json
 import os
-import pickle
 import queue
-import random
-import re
-import ssl
-import sys
 import subprocess
 import threading
 import time
-import traceback
-import webbrowser
-# third party imports
-from neo4j import GraphDatabase
-from nltk.stem import WordNetLemmatizer
-from PIL import Image
-from transformers import MarianMTModel, MarianTokenizer
-import certifi
-import flet as ft
-import google.generativeai as genai
-from langchain_google_genai.llms import GoogleGenerativeAI
-from langchain_openai import ChatOpenAI
-from langchain.agents import tool
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    HumanMessagePromptTemplate,
-    SystemMessagePromptTemplate,
-)
-from langchain.schema import HumanMessage, SystemMessage
-import numpy as np
-import nltk
-nltk.download('punkt_tab')
-import pandas as pd
-import PIL.Image
-import pyautogui
-import pytz
-import requests
+# third-party imports
 import speech_recognition as sr
-import tensorflow as tf
-import wikipedia
-import wolframalpha
-import yfinance as yf
-
-from user_persona import (
-    user_demographics, 
-    user_skills_and_experience,
-    user_interests, 
-    user_favorite_quotes,
-    )
+# local imports
+import chatbot.chatbot_global_state
 
 # ENVIRONMENT VARIABLES ###################################################################################################################################
 from dotenv import load_dotenv
@@ -103,65 +59,25 @@ for folder in folders_to_create:
 
 # CONSTANTS ###################################################################################################################################
 
-# Set the default SSL context for the entire script
-def create_ssl_context():
-    return ssl.create_default_context(cafile=certifi.where())
+# # Set the default SSL context for the entire script
+# def create_ssl_context():
+#     return ssl.create_default_context(cafile=certifi.where())
 
-ssl._create_default_https_context = create_ssl_context
-context = create_ssl_context()
-print(f"""SSL Context Details: 
-    CA Certs File: {context.cert_store_stats()} 
-    Protocol: {context.protocol} 
-    Options: {context.options} 
-    Verify Mode: {context.verify_mode}
-    Verify Flags: {context.verify_flags}
-    Check Hostname: {context.check_hostname}
-    CA Certs Path: {certifi.where()}
-    """)
-
-# Set API keys and other sensitive information from environment variables
-open_weather_api_key = os.getenv('OPEN_WEATHER_API_KEY')
-wolfram_app_id = os.getenv('WOLFRAM_APP_ID')
-openai_api_key=os.getenv('OPENAI_API_KEY')
-google_cloud_api_key = os.getenv('GOOGLE_CLOUD_API_KEY')
-google_maps_api_key = os.getenv('GOOGLE_MAPS_API_KEY')
-google_gemini_api_key = os.getenv('GOOGLE_GEMINI_API_KEY')
-google_documentation_search_engine_id = os.getenv('GOOGLE_DOCUMENTATION_SEARCH_ENGINE_ID')
-google_job_search_search_engine_id = os.getenv('GOOGLE_JOB_SEARCH_SEARCH_ENGINE_ID')
-google_health_search_engine_id = os.getenv('GOOGLE_HEALTH_SEARCH_ENGINE_ID')
-google_research_search_engine_id = os.getenv('GOOGLE_RESEARCH_SEARCH_ENGINE_ID')
-google_restaurant_search_engine_id = os.getenv('GOOGLE_RESTAURANT_SEARCH_ENGINE_ID')
-print('API keys and other sensitive information loaded from environment variables.\n\n')
-
-# Establish the TTS bot's wake/activation word and script-specific global constants
-# mic_on = True
-mic_on = False
-conversation_history = []
-activation_word = os.getenv('ACTIVATION_WORD', 'robot')
-username = os.getenv('USERNAME', 'None')
-password = os.getenv('PASSWORD', 'None')
-exit_words = os.getenv('EXIT_WORDS', 'None').split(',')
-print(f'Activation word is {activation_word}\n\n')
-
-# Initialize the language models
-print('Available language models:')
-# pocket_sphinx_model_files = os.path.join(LOCAL_LLMS_DIR, "sphinx4-5prealpha-src")  # for offline speech recognition (not good)
-genai.configure(api_key=google_gemini_api_key)
-for m in genai.list_models():
-  if 'generateContent' in m.supported_generation_methods:
-    print(m.name)
-# gemini_model = genai.GenerativeModel('gemini-pro')  
-gemini_model = genai.GenerativeModel('gemini-1.0-pro-latest')  
-gemini_vision_model = genai.GenerativeModel('gemini-pro-vision')
-lemmmatizer = WordNetLemmatizer()
-intents = json.loads(open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_intents.json').read())
-words = pickle.load(open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_words.pkl', 'rb'))
-classes = pickle.load(open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_classes.pkl', 'rb'))
-chatbot_model = tf.keras.models.load_model(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_model.keras')
-unrecognized_file_path = f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_unrecognized_message_intents.json'
-print('Language models loaded.\n\n')
+# ssl._create_default_https_context = create_ssl_context
+# context = create_ssl_context()
+# print(f"""SSL Context Details: 
+#     CA Certs File: {context.cert_store_stats()} 
+#     Protocol: {context.protocol} 
+#     Options: {context.options} 
+#     Verify Mode: {context.verify_mode}
+#     Verify Flags: {context.verify_flags}
+#     Check Hostname: {context.check_hostname}
+#     CA Certs Path: {certifi.where()}
+#     """)
 
 # CLASS DEFINITIONS ###################################################################################################################################
+
+# conversation_history = []
 
 class SpeechToTextTextToSpeechIO:
     '''SpeechToTextTextToSpeechIO handles the speech to text and text to speech functionality of the chatbot. It also handles the speech output queue.
@@ -243,8 +159,8 @@ class SpeechToTextTextToSpeechIO:
         '''speak_mainframe contains the bot's speech output voice settings, and it puts each chunk of text output from the bot or the LLM 
         into the speech output queue to be processed in sequential order. it also separately returns the estimated duration of the speech 
         output (in seconds), using the calculate_speech_duration function.'''
-        global conversation_history
-        conversation_history.append("Bot: " + text)
+        # global conversation_history
+        chatbot.chatbot_global_state.conversation_history.append("Bot: " + text)
         cls.queue_lock.acquire()
         try:
             cls.speech_queue.put((text, rate, chunk_size, voice))
@@ -255,8 +171,8 @@ class SpeechToTextTextToSpeechIO:
     
     @classmethod
     def speak_alfred(cls, text, rate=185, chunk_size=1000, voice="Oliver"):
-        global conversation_history
-        conversation_history.append("Bot: " + text)
+        # global conversation_history
+        chatbot.chatbot_global_state.conversation_history.append("Bot: " + text)
         cls.queue_lock.acquire()
         try:
             cls.speech_queue.put((text, rate, chunk_size, voice))
@@ -270,8 +186,8 @@ class SpeechToTextTextToSpeechIO:
         '''speak_mainframe contains the bot's speech output voice settings, and it puts each chunk of text output from the bot or the LLM 
         into the speech output queue to be processed in sequential order. it also separately returns the estimated duration of the speech 
         output (in seconds), using thecalculate_speech_duration function.'''
-        global conversation_history
-        conversation_history.append("Bot: " + text)
+        # global conversation_history
+        chatbot.chatbot_global_state.conversation_history.append("Bot: " + text)
         cls.queue_lock.acquire()
         try:
             cls.speech_queue.put((text, rate, chunk_size, voice))

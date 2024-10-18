@@ -2,12 +2,20 @@
 import json
 import threading
 import time
+# third-party imports
 import flet as ft
+# local imports
+from chatbot.chatbot_speech import SpeechToTextTextToSpeechIO
+from chatbot.chatbot_tools import ChatBotTools
+import chatbot.chatbot_global_state
 
 from dotenv import load_dotenv
 load_dotenv()
 
 # FRONT END ###################################################################################################################################
+
+# conversation_history = []
+# mic_on = False
 
 class ChatBotUI(ft.UserControl):
     def __init__(self):
@@ -35,16 +43,16 @@ class ChatBotUI(ft.UserControl):
         
         self.conversation_list = ft.ListView(
             auto_scroll=True,
-            width=600,
-            height=1000,
+            width=500,
+            height=800,
         )
         
         self.data_text = ft.TextField(
             value="", 
             multiline=True, 
             read_only=True, 
+            width=500,
             height=800, 
-            width=600,
         )
         
         controls_column = ft.Column(
@@ -61,8 +69,8 @@ class ChatBotUI(ft.UserControl):
                 self.conversation_list], 
             spacing=15, 
             scroll=ft.ScrollMode.ALWAYS, 
+            width=500, 
             height=800, 
-            width=600, 
             wrap=True,
         )
         
@@ -70,6 +78,10 @@ class ChatBotUI(ft.UserControl):
             controls=[
                 self.data_text], 
             spacing=15,
+            scroll=ft.ScrollMode.ALWAYS, 
+            width=500, 
+            height=800, 
+            wrap=True,
         )
         
         return ft.Container(
@@ -91,8 +103,8 @@ class ChatBotUI(ft.UserControl):
         try:
             while not SpeechToTextTextToSpeechIO.speech_queue.empty():
                 SpeechToTextTextToSpeechIO.speech_queue.get_nowait()
-            global conversation_history
-            conversation_history = []
+            # global conversation_history
+            chatbot.chatbot_global_state.conversation_history = []
             self.conversation_list.controls.clear()  # Clear the UI
         finally:
             SpeechToTextTextToSpeechIO.queue_lock.release()
@@ -104,18 +116,18 @@ class ChatBotUI(ft.UserControl):
         self.update()
         
     def toggle_mic(self, e):
-        global mic_on
-        mic_on = not mic_on
-        self.response_text.value = "Mic is on" if mic_on else "Mic is off"
+        # global mic_on
+        chatbot.chatbot_global_state.mic_on = not chatbot.chatbot_global_state.mic_on
+        self.response_text.value = "Mic is on" if chatbot.chatbot_global_state.mic_on else "Mic is off"
         self.update()
     
     def update_conversation(self):
-        global conversation_history
+        # global conversation_history
         last_index = 0
         while True:
-            current_len = len(conversation_history)
+            current_len = len(chatbot.chatbot_global_state.conversation_history)
             for i in range(last_index, current_len):
-                self.conversation_list.controls.append(ft.Text(value=conversation_history[i], width=None, expand=True, overflow=ft.TextOverflow.VISIBLE))
+                self.conversation_list.controls.append(ft.Text(value=chatbot.chatbot_global_state.conversation_history[i], width=None, expand=True, overflow=ft.TextOverflow.VISIBLE))
                 last_index += 1
             self.update()
             time.sleep(1)
@@ -143,7 +155,7 @@ class ChatBotUI(ft.UserControl):
         threading.Thread(target=self.update_data_store, daemon=True).start()
 
 def ui_main(page: ft.Page):
-    page.window.width = 1400
+    page.window.width = 1600
     page.window.height = 1000
     page.title = "ROBOT"
     page.scroll = "adaptive"
@@ -155,15 +167,15 @@ def ui_main(page: ft.Page):
     page.add(chatbot_ui)
     chatbot_ui.start_threads()
 
-# MAIN EXECUTION ###################################################################################################################################
+# # MAIN EXECUTION ###################################################################################################################################
     
-def run_chatbot():
-    chatbot_app = ChatBotBrain()  # Initialize the chatbot app
-    chatbot_tools = ChatBotTools()  # Initialize the chatbot tools
-    chatbot_app.chat(chatbot_tools)  # Run the chatbot app with the tools
+# def run_chatbot():
+#     chatbot_app = ChatBotBrain()  # Initialize the chatbot app
+#     chatbot_tools = ChatBotTools()  # Initialize the chatbot tools
+#     chatbot_app.chat(chatbot_tools)  # Run the chatbot app with the tools
 
-if __name__ == '__main__':
-    threading.Thread(target=SpeechToTextTextToSpeechIO.speech_manager, daemon=True).start()  # Speech manager thread
-    threading.Thread(target=run_chatbot, daemon=True).start()  # Chatbot app logic thread
-    ft.app(target=ui_main)  # Flet UI runs on the main thread
+# if __name__ == '__main__':
+#     threading.Thread(target=SpeechToTextTextToSpeechIO.speech_manager, daemon=True).start()  # Speech manager thread
+#     threading.Thread(target=run_chatbot, daemon=True).start()  # Chatbot app logic thread
+#     ft.app(target=ui_main)  # Flet UI runs on the main thread
     

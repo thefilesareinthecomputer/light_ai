@@ -1,6 +1,5 @@
 import threading
 import flet as ft
-import time
 
 from chatbot.chatbot_brain import ChatBotBrain
 from chatbot.chatbot_speech import SpeechToTextTextToSpeechIO
@@ -12,7 +11,7 @@ def run_chatbot():
     chatbot_tools = ChatBotTools()  # Initialize the chatbot tools
     chatbot_brain.chat(chatbot_tools)  # Run the chatbot app with the tools
 
-if __name__ == '__main__':
+def main():
     try:
         threading.Thread(target=SpeechToTextTextToSpeechIO.speech_manager, daemon=True).start()  # Speech manager thread
     except Exception as e:
@@ -25,3 +24,6 @@ if __name__ == '__main__':
         ft.app(target=ui_main)  # Flet UI runs on the main thread
     except Exception as e:
         print(f"Error starting Flet UI: {e}")
+         
+if __name__ == '__main__':
+    main()

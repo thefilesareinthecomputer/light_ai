@@ -12,50 +12,8 @@ import chatbot.chatbot_global_state
 # ENVIRONMENT VARIABLES ###################################################################################################################################
 from dotenv import load_dotenv
 load_dotenv()
-JAVA_HOME = os.getenv('JAVA_HOME')
-NEO4J_URI = os.getenv("NEO4J_URI")
-NEO4J_USER = os.getenv("NEO4J_USER")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
-NEO4J_DATABASE = os.getenv("NEO4J_DATABASE")
-NEO4J_PATH = os.getenv("NEO4J_PATH")
-USER_PREFERRED_LANGUAGE = os.getenv('USER_PREFERRED_LANGUAGE', 'en')  # 2-letter lowercase
 USER_PREFERRED_VOICE = os.getenv('USER_PREFERRED_VOICE', 'Evan')
-USER_PREFERRED_NAME = os.getenv('USER_PREFERRED_NAME', 'User')  # Title case
-USER_SELECTED_HOME_CITY = os.getenv('USER_SELECTED_HOME_CITY', 'None')  # Title case
-USER_SELECTED_HOME_COUNTY = os.getenv('USER_SELECTED_HOME_COUNTY', 'None')  # Title case
-USER_SELECTED_HOME_STATE = os.getenv('USER_SELECTED_HOME_STATE', 'None')  # Title case
-USER_SELECTED_HOME_COUNTRY = os.getenv('USER_SELECTED_HOME_COUNTRY', 'None')  # 2-letter country code
-USER_SELECTED_HOME_LAT = os.getenv('USER_SELECTED_HOME_LAT', 'None')  # Float with 6 decimal places
-USER_SELECTED_HOME_LON = os.getenv('USER_SELECTED_HOME_LON', 'None')  # Float with 6 decimal places 
-USER_SELECTED_TIMEZONE = os.getenv('USER_SELECTED_TIMEZONE', 'America/Chicago')  # Country/State format
-USER_STOCK_WATCH_LIST = os.getenv('USER_STOCK_WATCH_LIST', 'None').split(',')  # Comma separated list of stock symbols
-USER_DOWNLOADS_FOLDER = os.getenv('USER_DOWNLOADS_FOLDER')
 PROJECT_ROOT_DIRECTORY = os.getenv('PROJECT_ROOT_DIRECTORY')
-PROJECT_VENV_DIRECTORY = os.getenv('PROJECT_VENV_DIRECTORY')
-PROJECT_CODE_DIRECTORY = os.getenv('PROJECT_CODE_DIRECTORY')
-PROJECT_TOOL_DIRECTORY = os.getenv('PROJECT_TOOL_DIRECTORY')
-DATABASES_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, 'app_databases')
-FILE_DROP_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, 'app_generated_files')
-LOCAL_LLMS_DIR = os.path.join(PROJECT_ROOT_DIRECTORY, 'app_local_models')
-BASE_KNOWLEDGE_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, 'app_base_knowledge')
-SECRETS_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, '_secrets')
-SOURCE_DATA_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, 'app_source_data')
-SRC_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, 'src')
-TESTS_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, '_tests')
-UTILITIES_DIR_PATH = os.path.join(PROJECT_ROOT_DIRECTORY, 'utilities')
-SCRIPT_DIR_PATH = os.path.dirname(os.path.realpath(__file__))
-folders_to_create = [DATABASES_DIR_PATH, 
-                     FILE_DROP_DIR_PATH, 
-                     LOCAL_LLMS_DIR, 
-                     BASE_KNOWLEDGE_DIR_PATH, 
-                     SECRETS_DIR_PATH, 
-                     SOURCE_DATA_DIR_PATH, 
-                     SRC_DIR_PATH, 
-                     TESTS_DIR_PATH, 
-                     UTILITIES_DIR_PATH]
-for folder in folders_to_create:
-    if not os.path.exists(folder):
-        os.makedirs(folder)
 
 # CONSTANTS ###################################################################################################################################
 

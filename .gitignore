@@ -4,6 +4,7 @@ __pycache__/
 staticfiles/
 archive/
 app_generated_files/
+app_secrets/
 db/
 
 *.pyc

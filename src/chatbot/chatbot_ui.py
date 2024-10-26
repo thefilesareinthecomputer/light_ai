@@ -38,7 +38,7 @@ class ChatBotUI(ft.UserControl):
         )
         
         self.response_text = ft.Text(
-            value="Mic is off"
+            value="Mic is off",
         )
         
         self.conversation_list = ft.ListView(

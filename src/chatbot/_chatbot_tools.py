@@ -1470,7 +1470,7 @@ class ChatBotTools:
         global google_health_search_engine_id
         global google_research_search_engine_id
         global google_restaurant_search_engine_id
-        SpeechToTextTextToSpeechIO.speak_mainframe("Available engines: programming, career, health, research, and food. Which one should we use?")
+        SpeechToTextTextToSpeechIO.speak_mainframe("Which engine do you want to use?")
         while True:
             user_input = SpeechToTextTextToSpeechIO.parse_user_speech()
             if not user_input:
@@ -1603,6 +1603,13 @@ class ChatBotTools:
                     if hasattr(pod, 'text') and pod.text:
                         pod_data['text'] = pod.text
                     wolfram_data.append(pod_data)
+
+                # # Adding to data store
+                # ChatBotTools.data_store['wolfram_alpha_response'] = {
+                #     'query': user_input,
+                #     'pods': wolfram_data
+                # }  
+                # SpeechToTextTextToSpeechIO.speak_mainframe('Search complete. Data saved to memory.') 
 
                 # Initialize the data store dictionary if it doesn't exist
                 if 'wolfram_alpha_responses' not in ChatBotTools.data_store:

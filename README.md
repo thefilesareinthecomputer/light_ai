@@ -1,26 +1,43 @@
 ## APP OVERVIEW & NOTES:
-- this is a speech-to-text ai assistant chatbot desktop app designed to act as a copilot with the ability to access external web services and also interact with files and browsers on the user's computer.
-- it can act as a note taker, question answerer, research assistant, information organizer/retriever, task automator, etc. 
-- It's the basis for a jarvis-like ai assistant that can be extended with any number of attitional tools and features. 
-- The app contains a collection of agents and tools that work together to provide a range of functionality as one cohesive experience.
+- This is a voice-activated speech-to-text ai assistant chatbot desktop app.
+- It's designed to act as a copilot with the ability to access external web services. 
+- It can also interact with files and browsers on the user's computer.
+- It can act as a note taker, question answerer, research assistant, automator, etc. 
+- It's the basis for a jarvis-like ai assistant. 
+- It can be extended with any number of attitional tools and features. 
+- The app contains a collection of agents and tools that work together in one cohesive experience.
 - The tools available to the bot exist in the chatbot_tools module. 
-- The tools are called by the chatbot_model.keras and the agents themselves based on specific verbal prompts from the user.
 - The agents are powered by LLM APIs like gemini and openai. 
-- When the larger LLMs are called, they enter a sub-loop with the user and can be used to search the web, answer questions, or have a conversation with the user.
-- The chatbot_intents.json file is a collection of possible user phrases and responses that are used to train the app's base model.
-- The first model that the user interacts with is a smaller model trained locally on the hard-coded chatbot_intents.json file which contains sets of phrase / response pairs for the initial chatbot. Some responses also trigger calls to static methods from the ChatBotTools class.
+- The agent can search the web, access various APIs like Wolfram|Alpha, and speak with the user.
+- The agent can maintain a stateful conversation while using tools.
+- The agent can also access a neo4j graph database for long-term memory that persists between sessions.
+- The chatbot_intents.json file is a collection of possible user phrases and responses.
+- The chatbot_intents.json file is used to train the app's base chatbot_model.keras.
+- Functions (tools and agents) are triggered by chatbot_model.keras based on training data in chatbot_intents.json.
 - All of the available functions are listed below in detail.
-- The chatbot_model.keras model is the first model to activate when the app is run and acts as the "router" and function caller for triggering tools or more complex agents based on user commands. 
-- They also have shared access to a class-level dictionary called data_store which stores data rendered by tools for later access by the llm agent. 
-- Some examples of current tools include: google custom search engine, wolfram alpha, wikipedia, speech translation, text file translation, mouse control, weather forecast, spotify, youtube, user watch list stock report, etc.
-- when the app is running, it listens for user input and waits until it hears the activation word. 
+- The chatbot_model.keras model is the first model to activate when the app is run.
+- It acts as the "router" and function caller, triggering tools or more complex agents based on user commands. 
+- The agent has access to a shared dictionary called data_store which stores data rendered by tools. 
+- when the app is running, it listens idly until it hears the activation word. 
 - the activation word, followed by a recognized phrase, will trigger responses from the locally trained model (chatbot_model.keras), and then will call functions based on recognized phrases if applicable. 
 - some functions are one-off actions, and others trigger sub-loops such as the 'robot, AI' command which will enter a stateful TTS<>STT chat loop with the Gemini LLM. 
 - there is also base code for langchain agents powered by Gemini and GPT-3.5-turbo currently under "agent_one" and "agent_two", but they're not as built out as the Gemini chat loop yet. 
 - the user interacts with the app by speaking the activation word (a global constant variable) followed by their phrases. 
 - if the user speaks a phrase the bot doesn't recognize, it will save that interaction in the form of a JSON intent template that can then be vetted and corrected by the user and added into its intents.json training data file for the next training session. 
 - this "memory logging" has an opportunity to become a more robust and automatic process in a future sprint. 
-
+- List of currently available tools: 
+    - google search engine via voice prompt
+    - youtube search via voice prompt
+    - Wolfram|Alpha queries via voice prompt
+    - wikipedia search via voice prompt
+    - speech translation (Opus-MT models from transformers)
+    - text file translation (Opus-MT models from transformers, batch processing, no file size limit)
+    - cursor control via voice prompt
+    - computer vision image analysis (Gemini)
+    - weather forecasts (open weather api + Gemini)
+    - spotify search via voice prompt
+    - note taking and recall (Neo4j graph database)
+    - stock watch list reports
 
 ## VERSION
 - light_ai 0.0.1
@@ -37,7 +54,7 @@
 ## DEVELOPMENT ENVIRONMENT / DEPENDENCIES / INSTALLATION / CONFIG:
 
 ```bash
-os: macOS Sonoma 14
+development os: macOS Sonoma 14
 python 3.11.4
 
 this app requires the following homebrew packages to be installed on the local machine:

@@ -143,7 +143,7 @@ for m in genai.list_models():
   if 'generateContent' in m.supported_generation_methods:
     print(m.name)
 # gemini_model = genai.GenerativeModel('gemini-pro')  
-gemini_model = genai.GenerativeModel('gemini-1.0-pro-latest')  
+gemini_model = genai.GenerativeModel('gemini-1.5-pro')  
 gemini_vision_model = genai.GenerativeModel('gemini-pro-vision')
 # lemmmatizer = WordNetLemmatizer()
 # intents = json.loads(open(f'{PROJECT_ROOT_DIRECTORY}/src/src_local_chatbot/chatbot_intents.json').read())
